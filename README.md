@@ -11,5 +11,5 @@ This collections app uses Alamofire 4.8.1 and SwiftyJSON 4.2.0
 
 Screenshots:
 
-<img src="Screenshots/IMG_5617.PNG" width="100">
-<img src="Screenshots/IMG_5618.PNG" width="100">
+<img src="Screenshots/IMG_5617.PNG" width="250">
+<img src="Screenshots/IMG_5618.PNG" width="250">
