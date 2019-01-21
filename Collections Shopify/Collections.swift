@@ -10,6 +10,7 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
+// getAlamofire returns the SwiftyJSON data from the "url" API request in a completion handler.
 func getAlamofire(url: String, completion: @escaping (JSON) -> Void) {
     Alamofire.request(url)
         .responseJSON { response in
@@ -40,6 +41,7 @@ class CollectModel {
     private var productIDs : [String]
     public var products : [ProductModel]
     
+    // initialize based on JSON (NOT JSON ARRAY, JSON FOR ONE COLLECTION)
     init(dictionary: JSON) {
         self.body_html = dictionary["body_html"].string ?? ""
         self.handle = dictionary["delivery_method"].string ?? ""
@@ -49,14 +51,15 @@ class CollectModel {
         self.productIDs = [String]()
         self.products = [ProductModel]()
     }
+    // blank init
     init() {
-    self.body_html = ""
-    self.handle = ""
-    self.id = ""
-    self.image_url = ""
-    self.title = ""
-    self.productIDs = [""]
-    self.products = [ProductModel]()
+        self.body_html = ""
+        self.handle = ""
+        self.id = ""
+        self.image_url = ""
+        self.title = ""
+        self.productIDs = [""]
+        self.products = [ProductModel]()
     }
     
     // gets list of product models from the JSON data for the product list (products)
@@ -89,11 +92,11 @@ class ProductModel {
     public var individualInventory : [Int]
     public var image_url : String
     
+    // Initialize data from SwiftyJSON - Singular JSON, not list of product JSONs
     init(dictionary: JSON) {
         self.id = String(dictionary["id"].int ?? 0)
         self.title = dictionary["title"].string ?? ""
-        let url = dictionary["image"]["src"].string ?? ""
-        self.image_url = String(url.prefix(upTo: url.lastIndexOf("?") ?? url.endIndex))
+        self.image_url = dictionary["image"]["src"].string ?? ""
         self.totalInventory = -1
         self.individualInventory = [Int]()
         for variant in dictionary["variants"].array!{
@@ -102,8 +105,8 @@ class ProductModel {
         self.calcTotalInventory()
     }
     
-    // calcTotalInventory sums the list of individual inventories and then returns the sum.
-    private func calcTotalInventory() {
+    // calcTotalInventory sums the list of individual inventories puts it into self.totalInventory()
+    public func calcTotalInventory() {
         self.totalInventory = individualInventory.reduce(0, +)
     }
     

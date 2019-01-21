@@ -16,17 +16,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var collectionView: UITableView!
     
-    // Global URLS
+    // Global URL templates (NOTE NEED TO CHANGE IN PRODUCTVIEW AS WELL)
     let collectionsUrl: String = "https://shopicruit.myshopify.com/admin/custom_collections.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
     let collectionUrlBegin = "https://shopicruit.myshopify.com/admin/collects.json?collection_id="
     let collectionUrlEnd = "&page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
     let productUrlBegin = "https://shopicruit.myshopify.com/admin/products.json?ids="
     let productUrlEnd = "&page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
 
+    // stores selected cell # on click
     var selectedPath : Int = 0;
+    // list of categories and collections (STORAGE OF REST API DATA)
     var categoryList = [String]()
-    
-    
     var collections = [CollectModel]()
     
     // Initialize Colelction view table
@@ -36,13 +36,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.categoryList.count
     }
+    // Set text / images of elements in the collecitonCell (TEMPLATE: CollectionTableViewCell.swift)
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "collectionCellReuseIdentifier", for: indexPath) as! CollectionTableViewCell
         let text = self.categoryList[indexPath.row]
         cell.collectionLabel.text = text
         // Get collection image from the web
         do {
-            // get images from the web
             let collectionImgData = try Data(contentsOf: URL(string: collections[indexPath.row].image_url)!)
             cell.collectionImage.image = UIImage(data: collectionImgData)
             cell.collectionImage.contentMode = .scaleAspectFill
@@ -74,6 +74,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // deserializeCollects takes in the JSON array of collects, then returns the data in the
     //    form of a list of CollectModels
+    //    - Has mirror function in Collections.swift ProductModel (deserializeProductModels)
     func deserializeCollects(collects: SwiftyJSON.JSON) -> [CollectModel]{
         let collectArray = collects.array!
         var collectObjects = [CollectModel]()
@@ -93,7 +94,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return categoryList
     }
     
-    // pass data
+    // pass data to ProductView for displaying collection details
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         if segue.destination is ProductViewController
@@ -105,7 +106,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // when a table view cell is clicked
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // store the selected collection then transfer
+        // store the selected collection then segue to the ProductView with a "modal popup" display
         self.selectedPath = indexPath.row
         performSegue(withIdentifier: "productSegue", sender: self)
     }

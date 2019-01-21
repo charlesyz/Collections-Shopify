@@ -25,10 +25,11 @@ class ProductViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     @IBOutlet weak var tableView: UITableView!
     
-    
+    // Set rows in table view
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.collection.products.count
     }
+    // Set text and images inside each table row
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProductCellReuseID", for: indexPath) as! ProductTableViewCell
         cell.nameLabel.text = collection.products[indexPath.row].title
@@ -56,20 +57,21 @@ class ProductViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.tableView.dataSource = self
         self.tableView.delegate = self
         
-        // get product data from API calls
+        // get product data from API calls (currently does nothing on completion handler)
         getProductData() {
         }
     }
     
     // getProductData gets collect data then gets all the required data about the products
     func getProductData(completion: @escaping () -> Void){
-    
+        // get product list in the colelction
         let collectionURL = self.collectionUrlBegin + self.collection.id + self.collectionUrlEnd
         
         getAlamofire(url: collectionURL) { response in
-            // now get the product IDs
+            // now get the product IDs into collection.product
             let ids = self.collection.populateProductIDs(products: response["collects"])
-            // get the product data
+            
+            // fetch the product data -> list of comma separated products
             var productIDList : String = ""
             for id in ids{
                 productIDList += id + ","
