@@ -18,6 +18,7 @@ class ProductViewController: UIViewController, UITableViewDelegate, UITableViewD
     let collectionUrlEnd = "&page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
     let productUrlBegin = "https://shopicruit.myshopify.com/admin/products.json?ids="
     let productUrlEnd = "&page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
+    var collectionImage = UIImage()
     
     @IBOutlet weak var titleBar: UINavigationBar!
     @IBAction func backButton(_ sender: UIBarButtonItem) {
@@ -38,9 +39,9 @@ class ProductViewController: UIViewController, UITableViewDelegate, UITableViewD
         do {
             // get images from the web
             let productImgData = try Data(contentsOf: URL(string: collection.products[indexPath.row].image_url)!)
-            let collectionImgData = try Data(contentsOf: URL(string: collection.image_url)!)
+            
             cell.productImage.image = UIImage(data: productImgData)
-            cell.collectionImage.image = UIImage(data: collectionImgData)
+            cell.collectionImage.image = self.collectionImage
             cell.productImage.contentMode = .scaleAspectFit
             cell.collectionImage.contentMode = .scaleAspectFill
             
@@ -56,6 +57,14 @@ class ProductViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.titleBar.topItem?.title = collection.title
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
+        // initialize collection image
+        do {
+            let collectionImgData = try Data(contentsOf: URL(string: collection.image_url)!)
+            self.collectionImage = UIImage(data: collectionImgData)!
+        } catch let err {
+            print("Error : \(err.localizedDescription)")
+        }
         
         // get product data from API calls (currently does nothing on completion handler)
         getProductData() {
